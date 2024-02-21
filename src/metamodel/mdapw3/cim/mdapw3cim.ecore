@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="mdapw3cim" nsURI="http://alisamanipour.com/mdapw3cim" nsPrefix="">
+  <eClassifiers xsi:type="ecore:EClass" name="CIMMetaModel" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml.profile.standard/model/Standard.ecore#//Metamodel">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="d_realm" upperBound="-1"
+        eType="#//DRealm" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="c_realm" upperBound="-1"
+        eType="#//CRealm" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="dependency" upperBound="-1"
+        eType="ecore:EClass platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Dependency"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DRealm" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml.profile.standard/model/Standard.ecore#//Subsystem">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="d_storage_mechanism" upperBound="-1"
+        eType="#//DStorageMechanism" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="d_comp_subsystem" upperBound="-1"
+        eType="#//DProcessMechanism" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="d_authority" upperBound="-1"
+        eType="#//DAuthority" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DStorageMechanism" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml.profile.standard/model/Standard.ecore#//Subsystem">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="d_data_store" upperBound="-1"
+        eType="#//DDataStore" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DDataStore" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml.profile.standard/model/Standard.ecore#//Subsystem">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="d_entity" upperBound="-1"
+        eType="#//DEntity" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DProcessMechanism" eSuperTypes="#//DRealm">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="d_operation" upperBound="-1"
+        eType="#//DOperation" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="d_operation_constraint"
+        upperBound="-1" eType="#//DOperationConstraint" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="CRealm" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml.profile.standard/model/Standard.ecore#//Subsystem">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="c_storage_subsystem" upperBound="-1"
+        eType="#//CStorageMechanism" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="d_comp_subsystem" upperBound="-1"
+        eType="#//CProcessMechanism" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="d_authority" upperBound="-1"
+        eType="#//CAuthority" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="CStorageMechanism" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml.profile.standard/model/Standard.ecore#//Subsystem">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="c_data_store" upperBound="-1"
+        eType="#//CDataStore" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="CDataStore" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml.profile.standard/model/Standard.ecore#//Subsystem">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="c_data" upperBound="-1"
+        eType="ecore:EClass platform:/plugin/org.eclipse.uml2.uml.profile.standard/model/Standard.ecore#//Entity"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="CProcessMechanism" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml.profile.standard/model/Standard.ecore#//Subsystem">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="c_operation" upperBound="-1"
+        eType="ecore:EClass platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Operation"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="c_operation_constraint"
+        upperBound="-1" eType="ecore:EClass platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Constraint"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DEntity" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml.profile.standard/model/Standard.ecore#//Entity"/>
+  <eClassifiers xsi:type="ecore:EClass" name="DAsset" eSuperTypes="#//DEntity">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="#//DAssetType"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="DAssetType">
+    <eLiterals name="Fungiable"/>
+    <eLiterals name="NonFungiable" value="1"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Authority" abstract="true" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Actor"/>
+  <eClassifiers xsi:type="ecore:EClass" name="CAuthority" eSuperTypes="#//Authority"/>
+  <eClassifiers xsi:type="ecore:EClass" name="DAuthority" eSuperTypes="#//Authority"/>
+  <eClassifiers xsi:type="ecore:EClass" name="DOperationConstraint" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Constraint"/>
+  <eClassifiers xsi:type="ecore:EClass" name="DOperation" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Operation"/>
+  <eClassifiers xsi:type="ecore:EClass" name="C2DDependency" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Dependency"/>
+  <eClassifiers xsi:type="ecore:EClass" name="D2CDependency" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Dependency"/>
+  <eClassifiers xsi:type="ecore:EClass" name="C2CDependency" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Dependency"/>
+  <eClassifiers xsi:type="ecore:EClass" name="D2DDependency" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Dependency"/>
+</ecore:EPackage>

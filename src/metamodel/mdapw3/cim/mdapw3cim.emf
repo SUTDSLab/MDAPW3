@@ -1,0 +1,99 @@
+@namespace(uri="http://alisamanipour.com/mdapw3cim", prefix="")
+package mdapw3cim;
+
+import "platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore";
+import "platform:/plugin/org.eclipse.uml2.uml.profile.standard/model/Standard.ecore";
+//Interface or Ports may add for interface of subsystem components
+class CIMMetaModel extends standard.Metamodel{
+	val DRealm[*] d_realm;//decentralize subsystem
+	val CRealm[*] c_realm;//centralize subsystem
+	val uml.Dependency[*] dependency;
+}
+/*Subsystems----------------------------------------*/
+/*Subsystems > Decentralized Subsystems-------------*/
+class DRealm extends standard.Subsystem{
+	/*In Web3CIM level model of a Decentralize Subsystem is composed of
+	Decentralize Storage Subsystem, Decentralize Computaional Subystem and 
+	Decentralize Authorities
+	*/
+	val DStorageMechanism[*] d_storage_mechanism;
+	val DProcessMechanism[*] d_comp_subsystem;
+	val DAuthority[*] d_authority;
+}
+class DStorageMechanism extends standard.Subsystem{
+	val DDataStore[*] d_data_store;
+	//val DMetaDataStore[*] d_meta_data_store;
+}
+class DDataStore extends standard.Subsystem{
+	//val DData[*] d_data;
+	val DEntity[*] d_entity;
+}
+class DProcessMechanism extends DRealm{
+	val DOperation[*] d_operation;
+	val DOperationConstraint[*] d_operation_constraint;
+}
+/*Subsystems > Centralized Subsystems-------------*/
+class CRealm extends standard.Subsystem{
+	/*In Web3CIM level model of a Cecentralize Subsystem is composed of
+	Centralize Storage Subsystem, Centralize Computaional Subystem and 
+	Centralize Authorities
+	*/
+	val CStorageMechanism[*] c_storage_subsystem;
+	val CProcessMechanism[*] d_comp_subsystem;
+	val CAuthority[*] d_authority;
+}
+class CStorageMechanism extends standard.Subsystem{
+	val CDataStore[*] c_data_store;
+}
+class CDataStore extends standard.Subsystem{
+	val standard.Entity[*] c_data;
+}
+class CProcessMechanism extends standard.Subsystem{
+	val uml.Operation[*] c_operation;
+	val uml.Constraint[*] c_operation_constraint;
+}
+/*End Subsystems------------------------------------*/
+
+
+/*--------------Components--------------*/
+class DEntity extends standard.Entity{
+
+}
+class DAsset extends DEntity{
+	//is DMetaData that represent shared physical or digital business asset
+	attr DAssetType type;
+}
+enum DAssetType{
+	Fungiable;
+	NonFungiable;
+}
+
+abstract class Authority extends uml.Actor{
+	//this concept represent an business authority concept
+}
+class CAuthority extends Authority {
+	//is Centralize Authority 
+}
+class DAuthority extends Authority{
+	//is Dcentralize Authority
+}
+
+class DOperationConstraint extends uml.Constraint{
+
+}
+class DOperation extends uml.Operation{
+
+}
+/*--------------Dependecies--------------*/
+class C2DDependency extends uml.Dependency{
+	//Dependency which a Centralize client needs to a Decentralize supplier
+}
+class D2CDependency extends uml.Dependency{
+	//Dependency which a Decentralize client needs to a Centralize supplier
+}
+class C2CDependency extends uml.Dependency{
+	//Dependency which a Decentralize client needs to a Centralize supplier	
+}
+class D2DDependency extends uml.Dependency{
+	//Dependency which a Decentralize client needs to a Decentralize supplier	
+}
