@@ -1,0 +1,189 @@
+@namespace(uri="http://alisamanipour.com/mdapw3psm", prefix="")
+package mdapw3psm;
+
+import "platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore";
+import "platform:/plugin/org.eclipse.uml2.uml.profile.standard/model/Standard.ecore";
+
+//TODO: Add TOSCA plugin as dependency and extends the offical types
+class TOSCA_WebApplication{
+	
+}
+class TOSCA_Node_Compute{
+	
+}
+class TOSCA_DBMS{
+	
+}
+class TOSCA_WebServer{
+	
+}
+/*----------------------------------------------------------------------*/
+/*					    	 Structrual Elements   						*/
+/*----------------------------------------------------------------------*/
+class PSMMetamodel{
+	val DAppUI[*] wallet;
+	val ETHChain ethereum_chain;
+	val WebService[*] web_services;
+	ref OracleServer[*] orcale_server;
+	ref DBMS[*] dbms;
+}
+
+
+
+//--------------------Subsystem-----------------//
+class ETHChain extends standard.Subsystem, TOSCA_WebApplication, TOSCA_Node_Compute{
+	val ETHSmartContract[*] smart_contracts;
+}
+class WebService extends standard.Subsystem{
+	val WebServiceInterface[*] web_service_interfaces;
+}
+class WebServer extends WebService, TOSCA_WebServer{
+	
+}
+class OracleServer extends WebServer{
+
+}
+class DAppUI extends WebService,TOSCA_WebApplication,standard.Subsystem{
+	val Web3Adapter web3provider;
+	val OffChainServiceAdapter[*] offchain_services;
+	val uml.Class[*] regular_classe;
+}
+
+class DBMS extends TOSCA_DBMS, WebService{
+
+}
+class P2PDBMS extends DBMS{
+	
+}
+
+//--------------------End Subsystem-----------------//
+class SCABI extends uml.Interface{
+	ref ETHSmartContract base_classifier;
+}
+class WebServiceInterface extends uml.Interface{
+	
+}
+class DBMSInterface extends uml.Interface{
+	
+}
+class ERCInterface extends uml.Interface{
+	
+}
+
+
+class Web3Adapter extends OffChainServiceAdapter{
+	ref SCABI[*] sc_ABIs;
+}
+class DBMSAdapter extends OffChainServiceAdapter{
+	ref DBMSInterface[*] db_interaces;
+}
+class WebServiceAdapter extends OffChainServiceAdapter{
+	ref WebServiceInterface[*] web_service_interfaces;
+}
+class OffChainServiceAdapter extends uml.Class{
+	
+}
+//------------------start of Smart Contract Model Elements-------------//
+class ETHSmartContract extends uml.Class{
+	/*
+	nonce: Transaction sequence number for the sending account.
+	gasprice: Price you are offering to pay.
+	startgas: Maximum amount of gas allowed for the transaction.
+	to: Destination address (account or contract address).
+	value: ETH to transfer to the destination, if any.
+	data: All of the interesting stuff goes here. This could be raw data or a contract function signature and parameters1.
+	v, r, s: These make up the ECDSA signature 
+	*/
+}
+class ETHStruct extends uml.Class{
+	
+}
+class SCMapping extends uml.Property{
+	
+}
+class SCVariable extends uml.Property{
+	
+}
+class SCStateVariable extends SCVariable{
+	
+}
+class Member extends uml.Property{
+	
+}
+class SCEvent extends uml.Property{
+	
+}
+class SCEnum extends uml.Enumeration{
+	
+}
+class SCPrarmeter extends uml.Parameter{
+	
+}
+
+class SCFunction extends uml.Operation{
+	ref SCFunctionType type;
+}
+
+class SCConstructor extends uml.Operation{
+	
+}
+class SCEmitEvent extends uml.Operation{
+	
+}
+class SCModifier extends uml.Constraint{
+	
+}
+
+
+class SCFunctionType extends uml.Enumeration{
+	ref SCFunctionBehaviorTypeLiterals scf_b_type;
+}
+enum SCFunctionBehaviorTypeLiterals{
+	Payable;
+	Pure;
+	View;
+}
+
+class ETHAddress extends uml.PrimitiveType{
+	
+}
+class ETHBool extends uml.PrimitiveType{
+	
+}
+class ETHUint extends uml.PrimitiveType{
+	
+}
+class ETHUfixed extends uml.PrimitiveType{
+	
+}
+class ETHString extends uml.PrimitiveType{
+	
+}
+//------------------end of Smart Contract Model Elements-------------//
+/*----------------------------------------------------------------------*/
+/*							  Associations  							*/
+/*----------------------------------------------------------------------*/
+class SCTransacionDependency extends uml.Dependency{
+	//This type of call could be used for External Call between chaincode or 
+	//call from off-chain client(EOA) applications to contract
+}
+class Web3TransactionDependency extends uml.Dependency{
+	
+}
+class MemoryCallDependency extends uml.Dependency{
+	//Call from chaincode operation from another operation in the same chaincode(Interans Calls)
+
+}
+class MockTransactionDependency extends uml.Dependency{
+	//Call Dependency that mock transactional call from offchain component
+}
+class SCInstantiate extends Web3TransactionDependency{
+	/*[page 661]
+	A deployment is the allocation of an artifact or artifact instance to a deployment target. A component deployment is the
+	deployment of one or more artifacts or artifact instances to a deployment target, optionally parameterized by a
+	deployment specification. Examples are executables and configuration files.
+	*/
+}
+class Web3EventDependency extends uml.Dependency{
+	
+}
