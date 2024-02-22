@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="mdapw3psm" nsURI="http://alisamanipour.com/mdapw3psm" nsPrefix="">
+  <eClassifiers xsi:type="ecore:EClass" name="TOSCA_WebApplication"/>
+  <eClassifiers xsi:type="ecore:EClass" name="TOSCA_Node_Compute"/>
+  <eClassifiers xsi:type="ecore:EClass" name="TOSCA_DBMS"/>
+  <eClassifiers xsi:type="ecore:EClass" name="TOSCA_WebServer"/>
+  <eClassifiers xsi:type="ecore:EClass" name="PSMMetamodel">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="wallet" upperBound="-1"
+        eType="#//DAppUI" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ethereum_chain" eType="#//ETHChain"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="web_services" upperBound="-1"
+        eType="#//WebService" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="orcale_server" upperBound="-1"
+        eType="#//OracleServer"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="dbms" upperBound="-1" eType="#//DBMS"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ETHChain" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml.profile.standard/model/Standard.ecore#//Subsystem #//TOSCA_WebApplication #//TOSCA_Node_Compute">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="smart_contracts" upperBound="-1"
+        eType="#//ETHSmartContract" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="WebService" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml.profile.standard/model/Standard.ecore#//Subsystem">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="web_service_interfaces"
+        upperBound="-1" eType="#//WebServiceInterface" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="WebServer" eSuperTypes="#//WebService #//TOSCA_WebServer"/>
+  <eClassifiers xsi:type="ecore:EClass" name="OracleServer" eSuperTypes="#//WebServer"/>
+  <eClassifiers xsi:type="ecore:EClass" name="DAppUI" eSuperTypes="#//WebService #//TOSCA_WebApplication platform:/plugin/org.eclipse.uml2.uml.profile.standard/model/Standard.ecore#//Subsystem">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="web3provider" eType="#//Web3Adapter"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="offchain_services" upperBound="-1"
+        eType="#//OffChainServiceAdapter" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="regular_classe" upperBound="-1"
+        eType="ecore:EClass platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Class"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DBMS" eSuperTypes="#//TOSCA_DBMS #//WebService"/>
+  <eClassifiers xsi:type="ecore:EClass" name="P2PDBMS" eSuperTypes="#//DBMS"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SCABI" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Interface">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="base_classifier" eType="#//ETHSmartContract"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="WebServiceInterface" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Interface"/>
+  <eClassifiers xsi:type="ecore:EClass" name="DBMSInterface" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Interface"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ERCInterface" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Interface"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Web3Adapter" eSuperTypes="#//OffChainServiceAdapter">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="sc_ABIs" upperBound="-1"
+        eType="#//SCABI"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DBMSAdapter" eSuperTypes="#//OffChainServiceAdapter">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="db_interaces" upperBound="-1"
+        eType="#//DBMSInterface"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="WebServiceAdapter" eSuperTypes="#//OffChainServiceAdapter">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="web_service_interfaces"
+        upperBound="-1" eType="#//WebServiceInterface"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="OffChainServiceAdapter" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Class"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ETHSmartContract" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Class"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ETHStruct" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Class"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SCMapping" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Property"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SCVariable" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Property"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SCStateVariable" eSuperTypes="#//SCVariable"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Member" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Property"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SCEvent" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Property"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SCEnum" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Enumeration"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SCPrarmeter" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Parameter"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SCFunction" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Operation">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="type"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SCConstructor" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Operation"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SCEmitEvent" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Operation"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SCModifier" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Constraint"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SCFunctionType" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Enumeration">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="scf_b_type" eType="#//SCFunctionBehaviorTypeLiterals"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="SCFunctionBehaviorTypeLiterals">
+    <eLiterals name="Payable"/>
+    <eLiterals name="Pure" value="1"/>
+    <eLiterals name="View" value="2"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ETHAddress" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//PrimitiveType"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ETHBool" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//PrimitiveType"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ETHUint" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//PrimitiveType"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ETHUfixed" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//PrimitiveType"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ETHString" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//PrimitiveType"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SCTransacionDependency" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Dependency"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Web3TransactionDependency" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Dependency"/>
+  <eClassifiers xsi:type="ecore:EClass" name="MemoryCallDependency" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Dependency"/>
+  <eClassifiers xsi:type="ecore:EClass" name="MockTransactionDependency" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Dependency"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SCInstantiate" eSuperTypes="#//Web3TransactionDependency"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Web3EventDependency" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Dependency"/>
+</ecore:EPackage>
