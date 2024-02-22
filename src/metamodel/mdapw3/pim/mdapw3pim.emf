@@ -1,0 +1,123 @@
+@namespace(uri="http://alisamanipour.com/mdapw3pim", prefix="")
+package mdapw3pim;
+
+import "platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore";
+import "platform:/plugin/org.eclipse.uml2.uml.profile.standard/model/Standard.ecore";
+class PIMMetamodel extends standard.Metamodel{
+	val ChainSubsystem chain_system;
+	val OffChainSubsystem[*] off_chain_systems;
+}
+//------------------Subsystems------------------------/
+//------------------Subsystems->>OffChainSubsystems---/
+class OffChainSubsystem extends standard.Subsystem{
+
+}
+class OffChainApp extends OffChainSubsystem{
+	//standard.Subsystem Stereotype should applies on Instance of this component
+}
+class OffChainOracle extends OffChainSubsystem{
+	
+}
+class OffChainStorage extends OffChainSubsystem{
+	//standard.Subsystem Stereotype should applies on Instance of this component
+}
+class OffChainServer extends OffChainSubsystem{
+	
+}
+class OffChainP2PStorage extends OffChainSubsystem{
+	
+}
+//-------------End-Subsystems->>OffChainSubsystems----/
+//------------------Subsystems->>OnChainSubsystems----/
+class ChainSubsystem extends standard.Subsystem{	
+
+}
+
+class ChainStorage extends standard.Subsystem{
+	val ChainData[*] chain_data;
+}
+class ChainData extends uml.DataType{
+	
+}
+//-------------End-Subsystems->>OnChainSubsystems----//
+//------------------Interfaces-----------------------//
+class OffChainInterface extends uml.Interface{
+	//This interface is used for OffChainDStorage, OffChainOracle and OffChainComputational and OffChainStorage	
+}
+class ChainInterface extends uml.Interface{
+	
+}
+//-------------------End-Interfaces-----------------//
+
+
+/*----------------------------------------------------------------------*/
+/*							Structrual Elements							*/
+/*----------------------------------------------------------------------*/
+class ChainAddress extends uml.DataType{
+	
+}
+
+class ChainProperty extends uml.Property{
+	
+}
+class ChainEvent extends ChainProperty{
+	
+}
+class ChainClass extends uml.Class{
+	val ChainAddress chainCodeAdress;
+	val ChainProperty[*] chainCodePropertie;
+	val ChainOperation[*] chainCodeOperation;
+	val ChainEvent[*] containedEvent;
+	val ChainOperationConstraint[*] chainOperationConstraint;
+	
+	ref ChainInterface[*] implementedInterface;
+	ref ChainEvent[*] trigrredEvent;
+}
+
+class ChainOperation extends uml.Operation{
+
+}
+class ChainOperationConstraint extends uml.Constraint{
+
+}
+class ChainContract extends ChainClass{
+	
+}
+class ChainToken extends ChainContract{
+	ref TokenStandard tokenStandard;
+}
+class TokenStandard extends ChainInterface{
+
+}
+
+/*----------------------------------------------------------------------*/
+/*							   Dependencies     						*/
+/*----------------------------------------------------------------------*/
+// ChainCode Realization and Generalization between abstract chaincode and interfaces and between concrte classes 
+
+class ChainOffChainDepedency extends uml.Dependency{
+	//an OnChainComponent needs an OffChainComponent 
+}
+class OracleDependency extends ChainOffChainDepedency{
+	
+}
+class ChainChainDependency extends uml.Dependency{
+	//Dependency between off-chain components
+}
+class OffChainChainDependency extends uml.Dependency{
+	//an OffChainComponent needs an OnChainComponent 
+}
+class ChainEventDependency extends OffChainChainDependency{
+	//an OffChain Component need a ChainEvent to complete it's operation
+	val ChainEvent event;
+}
+class TransactionalDependency extends OffChainChainDependency{
+	//an OffChain Component need to send on-chain transaction to complete it's operation
+}
+class ChainViewDependency extends  OffChainChainDependency{
+	//an OffChain Component need to get chain data(without chaingin) to complete it's operation
+}
+class OffChainOffChainDependecy extends uml.Dependency{
+	//Dependency between on-chain components
+}
+

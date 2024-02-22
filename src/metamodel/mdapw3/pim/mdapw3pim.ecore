@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="mdapw3pim" nsURI="http://alisamanipour.com/mdapw3pim" nsPrefix="">
+  <eClassifiers xsi:type="ecore:EClass" name="PIMMetamodel" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml.profile.standard/model/Standard.ecore#//Metamodel">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="chain_system" eType="#//ChainSubsystem"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="off_chain_systems" upperBound="-1"
+        eType="#//OffChainSubsystem" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="OffChainSubsystem" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml.profile.standard/model/Standard.ecore#//Subsystem"/>
+  <eClassifiers xsi:type="ecore:EClass" name="OffChainApp" eSuperTypes="#//OffChainSubsystem"/>
+  <eClassifiers xsi:type="ecore:EClass" name="OffChainOracle" eSuperTypes="#//OffChainSubsystem"/>
+  <eClassifiers xsi:type="ecore:EClass" name="OffChainStorage" eSuperTypes="#//OffChainSubsystem"/>
+  <eClassifiers xsi:type="ecore:EClass" name="OffChainServer" eSuperTypes="#//OffChainSubsystem"/>
+  <eClassifiers xsi:type="ecore:EClass" name="OffChainP2PStorage" eSuperTypes="#//OffChainSubsystem"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ChainSubsystem" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml.profile.standard/model/Standard.ecore#//Subsystem"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ChainStorage" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml.profile.standard/model/Standard.ecore#//Subsystem">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="chain_data" upperBound="-1"
+        eType="#//ChainData" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ChainData" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//DataType"/>
+  <eClassifiers xsi:type="ecore:EClass" name="OffChainInterface" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Interface"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ChainInterface" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Interface"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ChainAddress" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//DataType"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ChainProperty" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Property"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ChainEvent" eSuperTypes="#//ChainProperty"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ChainClass" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Class">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="chainCodeAdress" eType="#//ChainAddress"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="chainCodePropertie" upperBound="-1"
+        eType="#//ChainProperty" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="chainCodeOperation" upperBound="-1"
+        eType="#//ChainOperation" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="containedEvent" upperBound="-1"
+        eType="#//ChainEvent" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="chainOperationConstraint"
+        upperBound="-1" eType="#//ChainOperationConstraint" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="implementedInterface" upperBound="-1"
+        eType="#//ChainInterface"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="trigrredEvent" upperBound="-1"
+        eType="#//ChainEvent"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ChainOperation" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Operation"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ChainOperationConstraint" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Constraint"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ChainContract" eSuperTypes="#//ChainClass"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ChainToken" eSuperTypes="#//ChainContract">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="tokenStandard" eType="#//TokenStandard"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TokenStandard" eSuperTypes="#//ChainInterface"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ChainOffChainDepedency" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Dependency"/>
+  <eClassifiers xsi:type="ecore:EClass" name="OracleDependency" eSuperTypes="#//ChainOffChainDepedency"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ChainChainDependency" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Dependency"/>
+  <eClassifiers xsi:type="ecore:EClass" name="OffChainChainDependency" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Dependency"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ChainEventDependency" eSuperTypes="#//OffChainChainDependency">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="event" eType="#//ChainEvent"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TransactionalDependency" eSuperTypes="#//OffChainChainDependency"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ChainViewDependency" eSuperTypes="#//OffChainChainDependency"/>
+  <eClassifiers xsi:type="ecore:EClass" name="OffChainOffChainDependecy" eSuperTypes="platform:/plugin/org.eclipse.uml2.uml/model/UML.ecore#//Dependency"/>
+</ecore:EPackage>
