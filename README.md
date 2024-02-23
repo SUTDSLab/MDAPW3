@@ -16,7 +16,7 @@ This repository hosts full implementation of MDAPW3 approach. MDAPW3 is a Model 
 You could find the Land leasing case study in [https://github.com/SUTDSLab/MDAPW3/CaseStudy](https://github.com/SUTDSLab/MDAPW3-CaseStudy)
 ## Project Structrue
 - META-INF: icludes the project definitions and depedencies of the project. Eclipse IDE use this directory content configuration files to properly load the project dependencies.
-- src: This directory includes the implementation of all the MDAPW3 meta-models transformations, code-generation and verification/valdiation codes.
+- src/mdapw3: This directory includes the implementation of all the MDAPW3 meta-models transformations, code-generation and verification/valdiation codes.
     - metamodels: includes all of the MDAPW3 metamodels
         - cim: this directory includes the following files
             - mdapw3cim.ecore : computational independent meta-model in EMF (.ecore) compatiable format.
