@@ -1,4 +1,4 @@
-# MDAPW3
+# MDAPW3: MDA-Based Development of Blockchain-Enabled Decentralized Applications 
 ## Table of Contents
 1. [Project Specification](#project-specification)
 2. [Project Structrue](#project-Structrue)
@@ -10,8 +10,7 @@
 6. [How to Cite This Project](#how-to-cite-this-project)
 
 ## Project Specification 
-TODO: project specifications will be added here
- you could also read our research paper in the following link:
+This repository hosts full implementation of MDAPW3 approach. MDAPW3 is a Model Drivent Development (MDD) approach based on OMG Model Driven Architecture (MDA) standard, which we are proposed in our latest research for developing Web3.0 DApps. As states in our research paper, we used Eclipse Epsilon framework to implement MDAPW3 which are include model-to-model transformations algorithms, mode-to-text (code generation) algorithms and also models verfication and validations scripts. you may intersted to read our research paper in the following link:
 - [TODO: link to our paper will be added here](./#)
 ## Project Structrue
 TODO: project structure specifications will be added here
