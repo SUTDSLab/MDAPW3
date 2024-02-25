@@ -1,0 +1,65 @@
+//Metamodel Quality Metrics Provider Functions
+
+operation getINHF() : Real {
+
+	return M.getAllOfType("EClass").eAllStructuralFeatures.excludingAll(M.getAllOfType("EClass").eStructuralFeatures).size();
+}
+
+operation getNTF() : Real {
+
+	return M.getAllOfType("EClass").eAllStructuralFeatures.size();
+}
+
+operation getNC() : Real {
+
+	return M.getAllOfType("EClass").size();
+}
+
+operation nrReferences() : Real {
+
+	return M.getAllOfType("EReference").size();
+}
+
+operation nrUnidirReferences() : Real {
+
+	return M.getAllOfType("EReference").select(r|not r.eOpposite.isDefined() ).size();
+}
+
+operation nrOppositeReferences() : Real {
+
+	return M.getAllOfType("EReference").select(r|r.eOpposite.isDefined() ).size();
+}
+
+operation nrReferencesContainment() : Real {
+
+	return M.getAllOfType("EReference").select(r|r.containment ).size();
+}
+
+operation nrAttrs() : Real {
+
+	return M.getAllOfType("EAttribute").size();
+}
+
+operation getSumPRED() : Real{
+
+var realMetamodel = M;
+var allclasses = realMetamodel.getAllOfType("EClass");
+return  allclasses.collect(mc|mc.closure(mc|mc.eSuperTypes).asSet().size()+1).sum().asReal();
+
+}
+
+operation getDITmax() : Real{
+
+var realMetamodel = M;
+var allclasses = realMetamodel.getAllOfType("EClass");
+return  allclasses.collect(mc|mc.closure(mc|mc.eSuperTypes).asSet().size()+1).max().asReal();
+
+}
+
+operation getMaxFANout() : Real{
+
+var realMetamodel = M;
+var allclasses = realMetamodel.getAllOfType("EClass");
+return  allclasses.collect(mc|mc.eAllReferences.size()).max().asReal();
+
+}
