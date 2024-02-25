@@ -1,0 +1,168 @@
+pre{
+
+}
+//----------------------------------------------------------//
+//			Participant transformation rules				//
+//----------------------------------------------------------//	
+rule Participant2Agent
+	transform bp:bpmnIn!Participant
+	to ca: cimOut!Agent{
+		ca.name=bp.name;
+	}
+//----------------------------------------------------------//
+//				Task transformation rules					//
+//----------------------------------------------------------//	
+rule ChoreoTask2Operation
+	transform bc: bpmnIn!ChoreographyTask
+	to co: cimOut!Operation{
+		co.name=bc.name;
+		
+		co.requireImutibility=true;
+		co.requireHighPerformance=false;
+		co.requireTransparancy=true;
+		cimOut!Agent.all.selectOne(a|a.name == bc.initiatingParticipantRef.name).callToOperations.add(co);
+	}
+
+rule ScriptTask2Operation
+	transform bc: bpmnIn!ScriptTask
+	to co: cimOut!Operation{
+		//
+		co.name=bc.name;
+		
+		co.requireImutibility=true;
+		co.requireHighPerformance=false;
+		co.requireTransparancy=true;
+	}
+//----------------------------------------------------------//
+//				Message transformation rules				//
+//----------------------------------------------------------//		
+rule MessageFlow2Message
+	transform bmf: bpmnIn!MessageFlow
+	to cm: cimOut!Message{
+		cm.name= bmf.messageRef.name;
+		//cm.type=bmf.itemDefenition. shouldCompelte
+		cm.sender = cimOut!Agent.all.selectOne(a|a.name == bmf.sourceRef.name);
+		cm.receiver = cimOut!Agent.all.selectOne(a|a.name == bmf.targetRef.name);
+		
+		var associatedTaskName=bpmnIn!ChoreographyTask.all.selectOne(c|c.messageFlowRef.exists(mfr|mfr.id=bmf.id)).name;
+		cm.associationOperation = cimOut!Operation.all.selectOne(o|o.name=associatedTaskName);
+	}
+//----------------------------------------------------------//
+//				Event transformation rules					//
+//----------------------------------------------------------//		
+
+rule IntermediateCatchEvent2Event
+	transform bice: bpmnIn!IntermediateCatchEvent
+	to ce: cimOut!Event{
+			ce.name=bice.name;
+			
+			var op = cimOut!Operation.all.selectOne(o|o.name = bice.incoming.sourceRef.first.incoming.first.sourceRef.name);
+			op.generatedEvents.add(ce);
+			ce.triggeredBy=op;
+			if(bice.outgoing.targetRef.first().type.name.equals("ChoreographyTask")){
+				cimOut!Agent.all.selectOne(a|a.name = bice.outgoing.targetRef.first.initiatingParticipantRef.name).listenFor.add(ce);	
+			}
+	}
+	
+//----------------------------------------------------------//
+//				DataStore transformation rules				//
+//----------------------------------------------------------//
+rule DataStore2AssetManager
+	transform bds: bpmnIn!DataStore
+	to ca: cimOut!AssetManager{
+	guard:bds.name.contains("AssetRegistry")
+		ca.name = bds.name;
+	}
+rule DataStore2DataStorage
+	transform bds:bpmnIn!DataStore
+	to ca:cimOut!DataStorage{
+	guard:not bds.name.contains("AssetRegistry")
+		ca.name = bds.name;
+	}
+//----------------------------------------------------------//
+//				DataObject transformation rules				//
+//----------------------------------------------------------//
+	//input/output Dataobject are for document purpose on diagram, so there is not in input model
+rule DataObject2DataObject
+		transform bdo: bpmnIn!DataObject
+		to cdo:cimOut!DataObject{
+		guard :not (bpmnIn!Association.all.exists(a|a.targetRef.id==bdo.id and a.sourceRef.name.contains("AssetRegistry")))
+			cdo.name=bdo.name;
+			for(doa in bpmnIn!Association){
+				if(doa.sourceRef.id == bdo.id)
+				{
+					if(doa.targetRef.type.name.equals("DataStoreReference"))
+					{
+						cdo.storeOn=cimOut!DataStorage.all.selectOne(s|s.name==doa.targetRef.name);
+						cimOut!DataStorage.all.selectOne(s|s.name==doa.targetRef.name).dataObjects.add(cdo);
+					}
+				}
+				if(doa.targetRef.id == bdo.id)
+				{
+						cdo.providBy=cimOut!DataProvider.all.selectOne(s|s.name==doa.sourceRef.name);
+					if(doa.sourceRef.type.name.equals("DataStoreReference"))
+					{
+						cdo.storeOn=cimOut!DataProvider.all.selectOne(s|s.name==doa.sourceRef.name);
+						if(cimOut!DataProvider.all.selectOne(s|s.name==doa.sourceRef.name) != null){
+							cimOut!DataProvider.all.selectOne(s|s.name==doa.sourceRef.name).dataObjects.add(cdo);
+							}
+					}
+						
+				}	
+				if(doa.sourceRef.name==bdo.name and doa.targetRef.type.name.equals("ChoreographyTask")){
+			
+						cdo.usedBy.add(cimOut!Operation.all.selectOne(o|o.name==doa.targetRef.name));
+				}
+				for(dor in bpmnIn!DataObjectReference){
+					if(dor.dataState!=null)
+						cdo.states.add(dor.dataState.name);
+				}
+			}
+		}
+rule DataObject2Asset
+		transform bdo: bpmnIn!DataObject
+		to cdo:cimOut!Asset{
+			guard :(bpmnIn!Association.all.exists(a|a.targetRef.id==bdo.id and a.sourceRef.name.contains("AssetRegistry")))
+				cdo.name=bdo.name;
+				for(a in bpmnIn!Association.all){
+					if(a.sourceRef.id== bdo.id){
+						cimOut!Operation.all.selectOne(o|o.name==a.targetRef.name).operateOnAsset.add(cdo);
+					}
+				}
+				var asoReg = bpmnIn!Association.all.selectOne(a|a.targetRef.id==bdo.id and a.sourceRef.name.contains("AssetRegistry")).sourceRef;
+				cimOut!AssetManager.all.selectOne(tm|tm.name=asoReg.name).providedAssets.add(cdo);
+		}
+//----------------------------------------------------------//
+//				Gateway transformation rules				//
+//----------------------------------------------------------//
+//----------------------------------------------------------//
+//				SequenceFlow transformation rules			//
+//----------------------------------------------------------//
+//convert GateWays to modifiers finally!!
+/*should remove becuase we model system based on events!
+rule ExclusiveGatewayOut2OperationGuard
+	transform beg:bpmnIn!SequenceFlow
+	to ca:cimOut!OperationGuard{
+		guard:beg.sourceRef.type.name.equals("ExclusiveGateway")
+			ca.guardCondition = beg.name;
+			ca.name = beg.name;
+			cimOut!Operation.all.selectOne(o|o.name == beg.targetRef.name).guards.add(ca);	
+	}
+*/
+//----------------------------------------------------------//
+//				OperationGuard transformation rules			//
+//----------------------------------------------------------//
+rule Participant2AuthorizationGuard
+	transform bp: bpmnIn!Participant
+	to ca: cimOut!AuthorizationGuard{
+		ca.guardCondition = "is"+bp.name;
+		ca.name = "only"+bp.name;
+		for(o in cimOut!Agent.all.selectOne(a|a.name == bp.name).callToOperations)
+		{
+			o.guards.add(ca);	
+		}
+		ca.authorizedAgent=cimOut!Agent.all.selectOne(a|a.name == bp.name);
+	}
+post{
+
+}
