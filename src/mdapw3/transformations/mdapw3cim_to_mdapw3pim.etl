@@ -1,0 +1,280 @@
+pre{
+	var offChainDecentralizedStorage : new pimIn!OffChainDecentralizedStorage;
+	offChainDecentralizedStorage.name="DStroage";
+	var chainStorage : new pimIn!ChainStorage;
+	var proxyChainCode : new pimIn!ChainCode;
+	proxyChainCode.name = "ProxyChainCode";
+	proxyChainCode.application=pimIn!ChainCodeApplication#Proxy;
+	
+	var bizChainCode : new pimIn!ChainCode;
+	bizChainCode.name = "BusinessLogic";
+	bizChainCode.application=pimIn!ChainCodeApplication#Logical;
+	
+	proxyChainCode.chainCodeAssociations.add(bizChainCode);
+}
+//-------------------------------------------------------//
+//-------------------------------------------------------//
+
+//-------------------------------------------------------//
+rule DataStorage2CentralizedStroage
+	transform ds:cimIn!DataStorage
+	to cs:pimIn!CentralizedStorage{
+	guard:ds.isPrivate==true
+		cs.name = ds.name;
+	}
+rule Agent2CenteralizedStroage
+	transform ca: cimIn!Agent
+	to cs: pimIn!CentralizedStorage{
+		cs.name = ca.name;
+	}
+rule Agent2UserInterface
+	transform ca: cimIn!Agent
+	to pui: pimIn!UserInterface{
+		pui.name = ca.name;
+		pimIn!CentralizedStorage.all.selectOne(cs|cs.name.equals(ca.name)).dataObjects.add(pui);
+	}
+//-------------------------------------------------------//
+rule Operation2ChainOperation
+	transform ca: cimIn!Operation
+	to puo: pimIn!OnChainOperation{
+	guard: (
+		   ca.requireImutibility == true and
+		   ca.requireHighPerformance==false and 
+		   ca.requireTransparancy == true
+		   )
+		   
+		   	var proxyOp : new pimIn!OnChainOperation;
+		   	proxyOp.name=ca.name;
+		   	
+	   	   	puo.name=ca.name;
+	   	   	bizChainCode.chainOperations.add(puo);
+	   	   	
+	   	   	proxyOp.onChainOperationCalls.add(puo);
+	   	   	proxyChainCode.chainOperations.add(proxyOp);
+	}
+rule Operation2UserOperation
+	transform ca: cimIn!Operation
+	to puo: pimIn!UserOperation{
+		//should create useroperation for every calltoOperation
+	   puo.name=ca.name;
+	   var associatedAgent=cimIn!Agent.all.selectOne(a|a.callToOperations.exists(c|c.name==ca.name));
+	   var associatedUI=pimIn!UserInterface.all.selectOne(u|u.name==associatedAgent.name);
+	   associatedUI.userOperations.add(puo);
+	   
+	}
+
+//-------------------------------------------------------//
+rule DataObject2ChainVariable
+	transform ca: cimIn!DataObject
+	to puo: pimIn!ChainVariable{
+	guard: ca.isBigData == false and
+		   ca.requireImutibility == true and
+		   ca.requireTransparancy == true and
+		   (
+		   		ca.canEncryptAndShare==true or
+		   		ca.canShareAmoungAllAgents==true 
+		   )
+	   		puo.storeOn=chainStorage;
+	   		puo.name=ca.name;	   			
+	}
+rule DataObject2DecentralizedOffChainDataObject
+	transform ca: cimIn!DataObject
+	to puo: pimIn!OffChainDataObject{
+	guard: ca.isBigData == true and
+		   ca.requireTransparancy == true and
+		   (
+		   	ca.canEncryptAndShare==true or
+		   	ca.canShareAmoungAllAgents==true 
+		   )
+		   
+	   puo.storeOn=offChainDecentralizedStorage;
+	   puo.name=ca.name;
+	   offChainDecentralizedStorage.dataObjects.add(puo);
+	    
+	   	for(uo in pimIn!UserOperation.all){
+	   		if(ca.usedBy.exists(o|o.name.equals(uo.name)) ){
+	   			puo.usedBy.add(uo);
+	   		}
+	   	}
+	}
+rule DataObject2CenteralizedOffChainDataObject
+	transform ca: cimIn!DataObject
+	to puo: pimIn!OffChainDataObject{
+	guard: ((ca.requireTransparancy == false or ca.canShareAmoungAllAgents==false))
+		    
+	   	puo.name=ca.name;
+	  if(ca.storeOn != null){
+	   	if(pimIn!CentralizedStorage.all.exists(cs|cs.name.equals(ca.storeOn.name))){
+	   		pimIn!CentralizedStorage.all.selectOne(cs|cs.name.equals(ca.storeOn.name)).dataObjects.add(puo);
+	   		puo.storeOn = pimIn!CentralizedStorage.all.selectOne(cs|cs.name.equals(ca.storeOn.name));
+	   	}
+	   }	
+	   	for(uo in pimIn!UserOperation.all){
+	   		if(ca.usedBy.exists(o|o.name.equals(uo.name)) ){
+	   			puo.usedBy.add(uo);
+	   		}
+	   	}
+	   }
+//-------------------------------------------------------//
+
+rule Event2ChainEvent
+	transform ca: cimIn!Event
+	to pce: pimIn!ChainEvent {
+		pce.name= ca.name;
+		
+		pce.triggeredBy= pimIn!OnChainOperation.all.selectOne(a|a.name==ca.triggeredBy.name);
+		pce.storeOn= chainStorage;
+		bizChainCode.chainEvents.add(pce);
+		//proxyChainCode.chainEvents.add(pce);
+	}
+rule Asset2ChainToken
+	transform ca: cimIn!Asset
+	to pt: pimIn!ChainToken{
+		pt.name = ca.name;
+		switch(ca.assetType){
+			case cimIn!AssetType#Fungible: pt.tokenType = pimIn!TokenType#Fungible;
+			case cimIn!AssetType#NonFungible: pt.tokenType = pimIn!TokenType#NonFungible;
+		}
+		//pt.provideBy = pimIn!OnChainOperation.all.selectOne(o|pt.name.isSubstringOf(o.name));
+		pt.storeOn = chainStorage;
+		chainStorage.dataObjects.add(pt);
+	}	
+//-------------------------------------------------------//
+rule Message2OperationInput
+	transform ca: cimIn!Message
+	to opc: pimIn!OperationInput{
+			var co = pimIn!OnChainOperation.all.selectOne(a|a.name==ca.associationOperation.name);
+			var param : new pimIn!Parameter;
+			param.name= ca.name;
+			//param.provideBy = pimIn!UserOperation.all.selectOne(u|u.name==ca.associationOperation.name);
+			opc.values.add(param);
+			co.operationInput = opc;
+	}
+	
+rule AuthorizationGuard2ChainCode
+	transform co: cimIn!AuthorizationGuard
+	to cc: pimIn!ChainCode{
+		cc.name = co.authorizedAgent.name;
+		cc.application=pimIn!ChainCodeApplication#AccessRestriction;
+		var pm : new pimIn!Modifier;
+		pm.name=co.name;
+		pm.condition=co.guardCondition;
+		cc.modifiers.add(pm);
+		
+		//proxyChainCode.modifiers.add(pm);
+		//var ownerChaineCode : new pimIn!ChainCode;
+		//ownerChaineCode.name = co.authorizedAgent.name;
+		//ownerChaineCode.modifiers.add(pm);
+		
+		var transferOwnership : new pimIn!OnChainOperation;
+		var constructor : new pimIn!OnChainOperation;
+		transferOwnership.name = "transferOwnership";
+		constructor.name= co.authorizedAgent.name;
+		var transferOwnershipInput : new pimIn!OperationInput;
+		var newOwnerAddress : new pimIn!Parameter;
+		newOwnerAddress.name = "newOwner";
+		newOwnerAddress.type = pimIn!VariableType#ChainAddress;
+		
+		transferOwnershipInput.values.add(newOwnerAddress);
+		transferOwnership.operationInput = transferOwnershipInput;
+		transferOwnership.guards.add(pm);
+		
+		cc.chainOperations.add(constructor);
+		cc.chainOperations.add(transferOwnership);
+		
+		var ownerAddress : new pimIn!ChainVariable;
+		ownerAddress.type = pimIn!VariableType#ChainAddress;
+		ownerAddress.name = co.authorizedAgent.name;
+		cc.chainVariables.add(ownerAddress);
+		
+		
+		
+		
+	}
+
+
+post{
+
+	for(cc in pimIn!ChainCode)
+	{
+		chainStorage.dataObjects.add(cc);
+	}
+	
+	//
+	for(oo in proxyChainCode.chainOperations){
+			var uo = pimIn!UserOperation.all.selectOne(u|u.name==oo.name);
+			if(uo != null)
+			{
+				uo.onChainOperationCalls.add(oo);
+			}
+	}
+	
+	//
+	for(ag in cimIn!Agent.all)
+	{
+		for(el in ag.listenFor)
+		{
+			var associatedEvent=pimIn!ChainEvent.all.selectOne(ce|ce.name==el.name);
+			pimIn!UserInterface.all.selectOne(ui|ui.name==ag.name).listenForEvents.add(associatedEvent);
+		}
+	}
+	
+	//
+	for(oo in pimIn!OnChainOperation.all){
+		var aso=cimIn!Operation.all.selectOne(o|o.name == oo.name);
+		if(aso!=null)
+		{
+			for(cg in aso.guards){
+				var m = pimIn!Modifier.all.selectOne(m|m.name == cg.name);
+				//var sourceChainCode = pimIn!ChainCode.all.selectOne(cc|cc.chainOperations.exists(o|o.name.equals(aso.name)));
+				var targetChainCode = pimIn!ChainCode.all.selectOne(cc|cc.modifiers.exists(g|g.name.equals(m.name)));
+				bizChainCode.chainCodeAssociations.add(targetChainCode);
+				oo.guards.add(m);
+			}
+		}
+	}
+	
+	
+	for(ds in cimIn!DataStorage.all){
+		for(puo in pimIn!ChainVariable){
+			if(ds.dataObjects.exists(do|do.name == puo.name)){
+				var scc: new pimIn!ChainCode;
+				scc.name = ds.name;
+				for(do in ds.dataObjects)
+					{
+						var setOp :  new pimIn!OnChainOperation;
+						var getOp :  new pimIn!OnChainOperation;
+						setOp.name = "set"+do.name;
+						getOp.name = "get"+do.name;
+						scc.chainOperations.add(setOp);
+						scc.chainOperations.add(getOp);
+						
+						
+						//var onChainSetOpAso = pimIn!OnChainOperation.all.selectOne(oc|oc.name == do.providBy.name);
+						var onChainSetOpAso = bizChainCode.chainOperations.selectOne(oc|oc.name == do.providBy.name);
+						onChainSetOpAso.onChainOperationCalls.add(setOp);
+						
+						var sourceCC1 = pimIn!ChainCode.all.selectOne(cc|cc.chainOperations.exists(o|o.name.equals(onChainSetOpAso.name)));
+						bizChainCode.chainCodeAssociations.add(scc);
+						
+						for(oc in bizChainCode.chainOperations)
+						{
+							if(do.usedBy.exists(o|o.name==oc.name))
+							{
+								//var sourceCC2 = pimIn!ChainCode.all.selectOne(cc|cc.chainOperations.exists(o|o.name.equals(oc.name)));
+									bizChainCode.chainCodeAssociations.add(scc);
+									oc.onChainOperationCalls.add(getOp);
+							}
+						}
+						
+					}
+					scc.chainVariables.add(puo);
+					scc.application = pimIn!ChainCodeApplication#Storage;
+					chainStorage.dataObjects.add(scc);
+					
+				}
+			}
+				
+	}
+}
+
