@@ -1,0 +1,37 @@
+{
+  "contracts": ["contracts/**"],
+  "app": {
+    "js/dapp.js": ["app/dapp.js"],
+    "index.html": "app/index.html",
+    "images/": ["app/images/**"],
+    "css/bootstrap.min.css": "node_modules/bootstrap/dist/css/bootstrap.min.css"
+  },
+  "buildDir": "dist/",
+  "config": {
+  "contracts": "contracts.js",
+  "blockchain": false,
+  "storage": false,
+  "communication": false,
+  "webserver": false
+},
+  "versions": {
+    "solc": "0.6.1"
+  },
+  "plugins": {
+    "embark-ipfs": {},
+    "embark-swarm": {},
+    "embark-whisper-geth": {},
+    "embark-geth": {},
+    "embark-parity": {},
+    "embark-profiler": {},
+    "embark-graph": {},
+    "embark-basic-pipeline": {}
+  },
+  "options": {
+    "solc": {
+      "optimize": true,
+      "optimize-runs": 200
+    }
+  },
+  "generationDir": "embarkArtifacts"
+}
