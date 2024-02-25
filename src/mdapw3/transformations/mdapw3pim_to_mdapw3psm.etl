@@ -1,0 +1,213 @@
+pre{
+	var chainPart : new psmIn!ChainPart;
+	var offChainPart : new psmIn!OffChainPart;
+	offChainPart.webUIs.println();
+	var web3ETHmodel : new psmIn!Web3ETHPSMModel;
+}
+rule ChainCode2SolSmartContract
+	transform cc: pimIn!ChainCode
+	to sc: psmIn!SmartContract{
+		sc.name = cc.name.replace(" ","");
+		sc.functions.addAll(cc.chainOperations.equivalent());
+		sc.modifiers.addAll(cc.modifiers.equivalent());
+		sc.events.addAll(cc.chainEvents.equivalent());
+		sc.stateVariables.addAll(cc.chainVariables.equivalent());
+		
+		switch(cc.application){
+			case pimIn!ChainCodeApplication#AccessRestriction:sc.standard=psmIn!ContractStandard#Ownable;
+			case pimIn!ChainCodeApplication#Storage:sc.standard=psmIn!ContractStandard#Storage;
+			case pimIn!ChainCodeApplication#Logical:sc.standard=psmIn!ContractStandard#Logical;
+			case pimIn!ChainCodeApplication#Proxy:sc.standard=psmIn!ContractStandard#Proxy;
+
+		}
+		
+		
+	}
+rule ChainToken2SolSmartContract
+	transform ct:pimIn!ChainToken
+	to	sc: psmIn!SmartContract{
+		sc.name = ct.name.replace(" ","");
+		switch(ct.tokenType){
+			case pimIn!TokenType#Fungible:
+				sc.standard = psmIn!ContractStandard#ERC20;
+				
+			case pimIn!TokenType#NonFungible:
+				sc.standard = psmIn!ContractStandard#ERC721;
+		}
+		
+	}
+rule ChainOperation2SolFuction
+	transform co:pimIn!OnChainOperation
+	to sf:psmIn!Function{
+		sf.name = co.name.replace(" ","");
+		sf.appliedModifiers.addAll(co.guards.equivalent());
+		if(co.operationInput!=null){
+			sf.functionInput= new psmIn!FunctionInput;
+			sf.functionInput.values.addAll(co.operationInput.values.equivalent());
+			
+		}
+		if(co.operationOutput!=null){
+			sf.functionInput= new psmIn!FunctionInput;
+			sf.functioinOutput.values.addAll(co.operationOutput.values.equivalent());
+		}
+		
+		
+	}
+rule Modifier2SolModifier
+	transform pmo:pimIn!Modifier
+	to smo:psmIn!Modifier{
+		smo.name=pmo.name;
+		smo.condition=pmo.condition;
+		smo.modifierInput = new psmIn!ModifierInput;
+		if(pmo.modifierInput!=null){
+			smo.modifierInput.values.addAll(pmo.modifierInput.values.equivalent());
+		}
+	}
+rule ChainEvent2SolEvent
+	transform pe:pimIn!ChainEvent
+	to se:psmIn!Event{
+		se.name = pe.name;
+		se.topic=pe.topic;
+		//se.payload=pe.playload;
+	}
+rule ChainVarialbe2SolStateVariable
+	transform pcv:pimIn!ChainVariable
+	to psv:psmIn!StateVariable{
+		psv.name = pcv.name.replace(" ","");
+		if(pcv.type == pimIn!VariableType#ChainAddress)
+		{
+			psv.type == psmIn!SCVariableType#address;
+		}
+	}
+rule OperationParam2SolParameter
+	transform op:pimIn!Parameter
+	to  ip:psmIn!Parameter{
+		ip.name=op.name;
+		if(op.type == pimIn!VariableType#ChainAddress){
+			ip.type="address";
+		}
+		else{
+			ip.type=op.type.literal;
+			
+		}
+	}
+	
+//offDecenteralizedChainStorage to ipfs or swarm
+rule DDataStorage2IPFSStorage
+	transform dds: pimIn!OffChainDecentralizedStorage
+	to	ips: psmIn!IPFSStorage{
+		ips.name = dds.name;
+	}
+rule DataObject2DDataObject
+	transform do: pimIn!OffChainDataObject
+	to	ido: psmIn!DecentralizedDataObject{
+	guard{
+			for(cs in pimIn!OffChainDecentralizedStorage.all){
+				if(cs.dataObjects.exists(cdo|cdo.name.equals(do.name))){
+					return true;
+				}
+			}
+			return false;
+		}
+		ido.name=do.name;
+		psmIn!OffChainStorage.all.selectOne(ocs|ocs.name.equals(do.storeOn.name)).dataObjects.add(ido);
+	}
+
+//
+rule CDataStorage2CloudStorage
+	transform cds: pimIn!CentralizedStorage
+	to cs: psmIn!CloudStorage{
+		cs.name=cds.name;
+	}
+	
+rule UserInterface2WebUI
+	transform ui: pimIn!UserInterface
+	to	wui: psmIn!WebUI{
+		wui.name = ui.name;
+		wui.userOperations.addAll(ui.userOperations.equivalent());
+		wui.rootElementRef = web3ETHmodel;
+		var	deployChoice = System.user.choose("choose where to deploy ui of (("+wui.name+"))",Sequence{"Cloud","IPFS","Swarm"});
+		if(deployChoice.equals("Cloud")){
+		
+			psmIn!CloudStorage.all.selectOne(cs|cs.name.equals(wui.name)).dataObjects.add(wui);
+		}
+		else if(deployChoice.equals("IPFS")){
+			"IPFS".println();
+			psmIn!IPFSStorage.all.first().dataObjects.add(wui);
+		}
+		
+		
+	}
+rule UserOperation2UserOperation
+	transform iuo:pimIn!UserOperation
+	to suo:psmIn!UserOperation{
+		suo.name=iuo.name.replace(" ","");
+		
+			for(oc in  iuo.onChainOperationCalls)
+			{
+				if(psmIn!Function.all.exists(f|f.name.replace(" ","").equals(oc.name.replace(" ",""))))
+					suo.onChainCalls.add(psmIn!Function.all.selectOne(f|f.name.replace(" ","").equals(oc.name.replace(" ",""))));
+			}
+		
+	}
+
+rule DataObject2CDataObject
+	transform do: pimIn!OffChainDataObject
+	to	ido: psmIn!CentralizedDataObject{
+		guard{
+			for(cs in pimIn!CentralizedStorage.all){
+				if(cs.dataObjects.exists(cdo|cdo.name.equals(do.name))){
+					return true;
+				}
+			}
+			return false;
+		}
+		ido.name=do.name;
+		psmIn!OffChainStorage.all.selectOne(ocs|ocs.name.equals(do.storeOn.name)).dataObjects.add(ido);
+		for(o in do.usedBy){
+			ido.usedBy.add(psmIn!UserOperation.all.selectOne(uo|uo.name.equals(o.name)));
+		}
+		
+	}
+post{
+for(cc in pimIn!ChainCode.all){
+	var sc = psmIn!SmartContract.all.selectOne(s|s.name.replace(" ","").equals(cc.name.replace(" ","")));
+	
+	for(cca in cc.chainCodeAssociations){
+			var ascsc = psmIn!SmartContract.all.selectOne(sm|sm.name.replace(" ","").equals(cca.name.replace(" ","")));
+			if(ascsc !=null){
+				sc.contracAssociations.add(ascsc);
+			}
+		}
+	}
+	
+
+	
+for(sm in psmIn!SmartContract.all){
+	
+		var cc = pimIn!ChainCode.all.selectOne(c|c.name.replace(" ","").equals(sm.name.replace(" ","")));
+		if(cc != null){
+			for(co in cc.chainOperations){
+				var sourceF = sm.functions.selectOne(f|f.name.replace(" ","").equals(co.name.replace(" ","")));
+				
+				if(co.onChainOperationCalls != null){
+					for(ooc in co.onChainOperationCalls){
+						var targetF = psmIn!Function.all.selectOne(f|f.containerSC.name!= sourceF.containerSC.name and f.name.replace(" ","").equals(ooc.name.replace(" ","")));
+						if(sourceF !=null and targetF !=null){
+							sourceF.functionCalls.add(targetF);
+						}
+					}
+				}
+				
+			}
+		}
+
+
+//ADD function association to token sc fucntions
+}
+	chainPart.smartContracts.addAll(psmIn!SmartContract.all);
+	offChainPart.offchainStorages.addAll(psmIn!OffChainStorage.all);
+	//offChainPart.webUIs.addAll(psmIn!WebUI.all);
+	web3ETHmodel.chainPart= chainPart;
+	web3ETHmodel.offChainPart =offChainPart;
+}
