@@ -1,0 +1,90 @@
+pre{
+	var genDir = "../gen/";
+	var configDir = genDir+"config/";
+	var contractsDir = genDir+"contracts/";
+	var jsBoilerpalteDir = genDir+"js/";
+}
+rule ProxyContract2SCProxy
+	transform sc : SmartContract{
+	guard : sc.standard==psmIn!ContractStandard#Proxy
+	template :"SC2ProxySC.egl"
+	target :contractsDir + sc.name +".sol"
+}
+rule Contract2LogicalSC
+	transform sc : SmartContract{
+	guard : sc.standard==psmIn!ContractStandard#Logical
+	template :"SC2LogicSC.egl"
+	target :contractsDir + sc.name +".sol"
+}
+
+rule Contract2StorageSC
+	transform sc : SmartContract{
+	guard : sc.standard==psmIn!ContractStandard#Storage
+	template :"SC2StorageSC.egl"
+	target :contractsDir + sc.name +".sol"
+}
+
+rule Contract2OwnableSC
+	transform sc : SmartContract{
+	guard : sc.standard==psmIn!ContractStandard#Ownable
+	template :"SC2OwnableSC.egl"
+	target :contractsDir + sc.name +".sol"
+}
+
+rule Contract2FungibleToken
+	transform sc : SmartContract{
+	guard : sc.standard==psmIn!ContractStandard#ERC20
+	template :"SC2ERC20SC.egl"
+	target :contractsDir + sc.name +".sol"
+}
+
+rule Contract2NonFungibleToken
+	transform sc : SmartContract{
+	guard : sc.standard==psmIn!ContractStandard#ERC721
+	template :"SC2ERC721SC.egl"
+	target :contractsDir + sc.name +".sol"
+}
+
+rule Dapp2ContractsConfig
+	transform cp : Web3ETHPSMModel{
+	template : "Dapp2SCsConf.egl"
+	target : configDir+ "contract.js" 
+	}
+rule Dapp2ChainConfig
+	transform cp : Web3ETHPSMModel{
+	template : "Dapp2ChainConf.egl"
+	target : configDir+ "blockchain.js" 
+	}
+rule Dapp2StorageConfig
+	transform cp : Web3ETHPSMModel{
+	template : "Dapp2StorageConf.egl"
+	target : configDir+ "storage.js" 
+	}
+rule Dapp2CommunicationConfig
+	transform cp : Web3ETHPSMModel{
+	template : "Dapp2ComConf.egl"
+	target : configDir+ "communication.js" 
+	}
+rule Dapp2FrameworkConfig
+	transform cp : Web3ETHPSMModel{
+	template : "Dapp2FrameworkConf.egl"
+	target : configDir+ "framework.config.json" 
+	}
+
+rule Dapp2JSBoilderPlateCodes
+	transform cp : Web3ETHPSMModel{
+	template : "Dapp2JSBoilerPlate.egl"
+	target : jsBoilerpalteDir+ "DAppJSBoilerplate.js" 
+	}
+
+rule WebUi2JSBoilderPlateCodes
+	transform wu : WebUI{
+	template : "WebUI2JSBoilderPlate.egl"
+	target : jsBoilerpalteDir+ wu.name +"UI"+ ".js" 
+	}
+	
+rule IPFS2JSBoilderPlateCodes
+	transform ip : IPFSStorage{
+	template : "IPFS2JSBoilerplate.egl"
+	target : jsBoilerpalteDir+ "IPFSBoilerplate.js" 
+	}
