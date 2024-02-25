@@ -49,10 +49,23 @@ You could find the Land leasing case study in [https://github.com/SUTDSLab/MDAPW
 ## Development Environment Setup
 
 ### Setting Up Eclipse IDE
-TODO: IDE setup instructions will be added here
+You could use any version of Eclipse IDE with proper plugins, but for quick luanch and ready to use develop environment, we suggest to use Eclipse Epsilon version. follow the below offical instaructions to install it:
+[Installing Eclipse Epsilon](https://eclipse.dev/epsilon/download/)
 ### Installing Dependencies
-TODO: Dependencies installation instructions will be added here
+If you prefer to use regular version of the Eclipse, you could install Epsilon as an extension by the following the below instructions:
+[Installing Epsilon using Eclipse Marketplace](https://eclipse.dev/epsilon/download/#eclipse-marketplace)
 ## Setting Up The Project
-TODO: Project setup instructions will be added here
+1. Clone the git repository
+```
+git clone https://github.com/SUTDSLab/MDAPW3.git
+``` 
+2. Import the repository as a project in Eclipse
+File > Import > Existing Project into Workspace > Select the root directory > Finish
+
+3. To run the project follow the below instructions:
+    1. Register any Ecore metamodels in it
+    2. Right click the .launch file in it
+    3. Select Run as... and click the first item in the menu that pops up
+
 ## How to Cite This Project
 TODO: paper citation record will be added here
