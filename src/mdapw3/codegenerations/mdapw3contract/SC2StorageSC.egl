@@ -1,0 +1,19 @@
+pragma solidity 0.4.17
+[%for(im in sc.contracAssociations){%]
+import "./[%=im.name%]";
+[%}%]
+
+contract [%=sc.name%] {
+	[%for(s in sc.stateVariables){%] public [%=s.type.literal%] [%=s.name%];
+	[%}%]
+	//Functions
+	[%for(s in sc.stateVariables){%]
+	function get[%=s.name%]Value() public constant returns([%=s.type.literal%]){
+		return [%=s.name%];
+	}
+	
+	function set[%=s.name%]Value([%=s.type.literal%] new[%=s.name%]Value) public {
+		[%=s.name%]=new[%=s.name%]Value;
+	}
+	[%}%]
+}

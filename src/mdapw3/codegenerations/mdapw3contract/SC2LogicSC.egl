@@ -1,0 +1,21 @@
+pragma solidity 0.4.17
+[%for(im in sc.contracAssociations){%]
+import "./[%=im.name%]";
+[%}%]
+
+contract [%=sc.name%] {
+	[%for(s in sc.stateVariables){%] public [%=s.type.literal%] [%=s.name%];
+	[%}%]
+	
+	[%for(im in sc.contracAssociations){ if(im.standard!=psmIn!ContractStandard#Ownable){%] 
+		[%=im.name%] [%=im.name.firstToLowerCase()%] [%}}%];
+	
+	//Functions
+	[%for(fu in sc.functions){%]
+	function [%=fu.name%] ([%if(fu.functionInput!=null){ for(param in fu.functionInput.values){%] [%=param.type%] [%=param.name%][%}}%]) [%=fu.accessLevel%] [%=fu.functionType%] [%for(g in fu.appliedModifiers){%] [%=g.name%] [%}%] [%if(fu.returnVarName!=null){%] 
+	return ([%=fu.returnType%] [%=fu.returnVarName%]) [%}%]{
+ 			[%for(fc in fu.functionCalls){%] [%=fc.containerSC.name.firstToLowerCase()%].[%=fc.name%](...);
+			[%}%]
+		}
+	[%}%]
+}

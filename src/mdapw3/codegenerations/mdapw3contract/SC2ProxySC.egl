@@ -1,0 +1,23 @@
+pragma solidity 0.4.17
+import "./Ownership.sol";
+[%for(im in sc.contracAssociations){%]
+import "./[%=im.name%]";
+[%}%]
+
+contract [%=sc.name%] is Owned{
+
+    address public currentVersion;
+    
+    function [%=sc.name%](address initAddr) public {
+        currentVersion = initAddr;
+        owner = msg.sender;
+    }
+
+	function changeBusinessAddress(address newVersionAddr) public onlyOwner{
+		currentVersion = newVersionAddr;
+	}
+	
+    function() public {
+    	require(currentVersion.delegatecall(msg.data));
+    }
+}

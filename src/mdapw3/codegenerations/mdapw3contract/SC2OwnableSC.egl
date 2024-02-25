@@ -1,0 +1,24 @@
+pragma 
+
+contract [%=sc.name%] {
+	address public [%=sc.name%];
+	event LogOnwershipTransferred(
+		address indexed previous[%=sc.name%],
+		address indexed new[%=sc.name%]
+	);
+	
+	modifier only[%=sc.name%](){
+		require(msg.sender == [%=sc.name%]);
+		_;
+	}
+	
+	function [%=sc.name%]() public {
+		[%=sc.name%]=msg.sender;
+	}
+	
+	function transferOwnership(address new[%=sc.name%]) public only[%=sc.name%] {
+		require(new[%=sc.name%] != address(0));
+		LogOnwershipTransferred([%=sc.name%],new[%=sc.name%]);
+		[%=sc.name%]=new[%=sc.name%];
+	}
+}
