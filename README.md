@@ -34,7 +34,7 @@ You could find the Land leasing case study in [https://github.com/SUTDSLab/MDAPW
         - bpmn2chor_to_mdapw3cim.etl : impelemtaion of the BPMN2.0 Choregraphy model to MDAPW3 CIM transformation alogrithm using Epsilon Transformation Language (ETL)
         - mdapw3cim_to_mdapw3pim.etl : impelemtaion of the MDAPW3 CIM model to MDAPW3 PIM transformation alogrithm using ETL
         - mdapw3pim_to_mdapw3psm.etl : impelemtaion of the MDAPW3 PIM model to MDAPW3 PSM transformation alogrithm using ETL
-        - mdapw3psm_to_mdapw3code.etl : impelemtaion of the MDAPW3 PSM model to Web3.0 DApp Code-base transformation alogrithm using ETL. this transformation algorithm use code generation algorithms which are written in .egl
+        - mdapw3psm_to_mdapw3code.egx : impelemtaion of the MDAPW3 PSM model to Web3.0 DApp Code-base transformation alogrithm using EGX. this transformation algorithm use code generation algorithms which are written in .egl
     - codegenerations: includes implementations of the model-to-text (code generations) algorithms
         - mdapw3contract.egl : implementaion of smart contract code generation algorithm using Epsilon Generation Language (EGL). generated codes are in solidity language.
         - mdapw3dappui.egl : implementaion of DApp UI code generation algorithm using EGL. the generated codes are in JavaScript language.
