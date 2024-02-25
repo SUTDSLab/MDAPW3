@@ -1,0 +1,37 @@
+
+[%for(sc in  wu.rootElementRef.chainPart.smartContracts){
+	if(sc.standard.literal.equals("Proxy")){
+%]
+import [%=sc.name%] from './jsArtifacts/contracts/[%=sc.name%]';
+[%}
+}
+%]
+  
+
+EmbarkJS.onReady((error) => {
+  if (error) {
+    console.error('Error while connecting to web3', error);
+    return;
+  }
+  
+  //SmartContracts stub calls
+  
+[%
+  	var proxSC = wu.rootElementRef.chainPart.smartContracts.selectOne(s|s.standard.literal.equals("Proxy"));
+ 	for(fu in proxSC.functions){
+  		var asoFu = fu.functionCalls.first();
+  	if(wu.userOperations.exists(u|u.name.equals(asoFu.name))){
+  		%]
+  		
+  	function [%=asoFu.name%]([%if(asoFu.functionInput!=null){ for(param in asoFu.functionInput.values){%] [%=param.name%] [%if(not asoFu.functionInput.values.last().name.equals(param.name)){%],[%}}}%]){
+  	
+  		//implement your logic here
+  		//...
+  		
+  		//onChain Call
+		[%=proxSC.name%].methods.[%=asoFu.name%]([%if(asoFu.functionInput!=null){ for(param in asoFu.functionInput.values){%] [%=param.name%] [%if(not asoFu.functionInput.values.last().name.equals(param.name)){%],[%}}}%]).send();
+		
+		}
+		[%}%]
+[%}%]
+}
