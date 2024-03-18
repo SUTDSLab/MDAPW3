@@ -1,0 +1,3 @@
+[submodule "src/mdapw3/examples/land-leasing"]
+	path = src/mdapw3/examples/land-leasing
+	url = https://github.com/SUTDSLab/MDAPW3-CaseStudy
