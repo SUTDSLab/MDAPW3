@@ -13,7 +13,7 @@
 This project is the full implementation of MDAPW3 approach. MDAPW3 is a Model Driven Development (MDD) approach based on OMG Model Driven Architecture (MDA) standard proposed in our recent research for developing Web3.0 DApps. We used the Eclipse Epsilon framework to implement MDAPW3 which includes model-to-model transformations algorithms, mode-to-text (code generation) algorithms as well as model verification and validations scripts.
 
 ## Case Study and Examples
- The case study and examples are also available at [https://github.com/SUTDSLab/MDAPW3-CaseStudy](https://github.com/SUTDSLab/MDAPW3-CaseStudy)
+ The case study and examples are also available at [./src/mdapw3/examples/](./src/mdapw3/examples/)
 
 ## Project Structure
 - META-INF: includes the project definitions and dependencies of the project. Eclipse IDE use this directory content configuration files to properly load the project dependencies.
@@ -45,6 +45,7 @@ This project is the full implementation of MDAPW3 approach. MDAPW3 is a Model Dr
         - mdapw3p2pdms : implementations of P2PDBMS like IPFS adapters code generation algorithm using EGL. the generated codes are in JavaScript language.
         - mdapw3config : implementations of build and deployment code generation algorithm using EGL. the generated codes are in JSON, YMAL and JS languages.
     - verification_validation: includes implementations of model verifications and validations algorithms. these algorithms implemented using Epsilon Validation Language (EVL) and Epsilon Comparison Language (ECL).
+    - examples: includes all case studies and examples
 
 
 ## Development Environment Setup
