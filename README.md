@@ -70,4 +70,6 @@ File > Import > Existing Project into Workspace > Select the root directory > Fi
     3. Select Run as... and click the first item in the menu that pops up
 
 ## How to Cite This Project
-TODO: paper citation record will be added here
+```
+Ali Samanipour and O. Bushehrian, “MDAPW3: MDA-Based Development of Blockchain-Enabled Decentralized Applications”. SUTECH, Mar. 18, 2024. doi: 10.5281/zenodo.10835873.
+```
